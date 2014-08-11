@@ -1,0 +1,22 @@
+
+<table class="pure-table pure-table-bordered">
+	<thead>
+		<tr>
+			<th></th>
+			<th ng-repeat="label in labels">{{label}}</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="person in persons">
+			<td class="grayout">{{person.name}}</td>
+			<td ng-repeat="preference in person.preferences.list" ng-class="preference.state">
+				<div ng-show="editable">
+					<select ng-model="preference" ng-options="p.name for p in person.preferences.list" ng-change="interchange(person, $index, preference.index)"></select>
+				</div>
+				<div ng-show="!editable">
+					{{preference.name}}
+				</div>
+			</td>
+		</tr>
+	</tbody>
+</table>
