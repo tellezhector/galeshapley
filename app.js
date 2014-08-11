@@ -138,7 +138,6 @@ app.controller("ctrl",
 				girl.last = girlpreference.index;
 				girlpreference.state = "matched";
 				preference.state = "matched";
-				matchNextBoy(boy);
 			}
 			else if(girl.last > girlpreference.index)
 			{
@@ -152,7 +151,7 @@ app.controller("ctrl",
 				oldPrefernce.state = "unavailable";
 				oldBoy.preferences.list[oldBoy.last].state = "unavailable";
 				matchBoy(oldBoy);
-				matchNextBoy(boy);
+				
 			}
 			else
 			{
@@ -160,6 +159,8 @@ app.controller("ctrl",
 				girlpreference.state = "unavailable";
 				matchBoy(boy);
 			}
+
+			matchNextBoy(boy);
 		}
 
 		var matchNextBoy = function(boy)
