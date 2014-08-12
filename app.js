@@ -13,22 +13,27 @@ app.directive("personsTable", function($timeout)
 		},
 		link : function(scope, element)
 		{
-
-
-			scope.interchange = function(person, indexChanged, newIndex)
+			scope.interchange = function(person, oldIndex, newIndex, $element)
 			{				
 				var list = person.preferences.list;
 				
-				var aux = list[indexChanged];
-				list[indexChanged] = list[newIndex];
-				list[indexChanged].index = indexChanged;
-				person.preferences.index[list[indexChanged].name] = list[indexChanged].index;
+				var aux = list[oldIndex];
+				var oldHash = list[oldIndex].$$hashKey;
+				var newHash = list[newIndex].$$hashKey;
+
+				list[oldIndex] = list[newIndex];
+				list[oldIndex].$$hashKey = oldHash;
+				list[oldIndex].index = oldIndex;
+				person.preferences.index[list[oldIndex].name] = list[oldIndex].index;
 
 				list[newIndex] = aux;
+				list[newIndex].$$hashKey = newHash;
 				list[newIndex].index = newIndex; 
 				person.preferences.index[list[newIndex].name] = list[newIndex].index;
 				
 				person.preferences.list = list;
+
+				console.log($element);
 			}
 		}
 	};

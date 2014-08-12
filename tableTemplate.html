@@ -11,7 +11,7 @@
 			<td class="grayout">{{person.name}}</td>
 			<td ng-repeat="preference in person.preferences.list" ng-class="preference.state">
 				<div ng-show="editable">
-					<select ng-model="preference" ng-options="p.name for p in person.preferences.list" ng-change="interchange(person, $index, preference.index)"></select>
+					<select ng-model="preference" ng-options="p.name for p in person.preferences.list" ng-change="interchange(person, $index, preference.index, this)"></select>
 				</div>
 				<div ng-show="!editable">
 					{{preference.name}}
