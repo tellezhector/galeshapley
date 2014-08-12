@@ -133,14 +133,18 @@
 							    <input id="step_by_step" ng-model="stepByStep" type="checkbox" ng-change="nextStep()"> Step by step
 							</label>
 							
-							<button ng-show="stepByStep" type="button" class="pure-button pure-button-primary" ng-click="nextStep()">next step</button>
+							<button ng-show="stepByStep && editable" type="button" class="pure-button pure-button-primary" ng-click="galeSapley()">next step</button>
+							<button ng-show="stepByStep && !editable" type="button" class="pure-button pure-button-primary" ng-click="nextStep()">next step</button>
 						</fieldset>
 					</form>
 			    	<button type="button" class="pure-button pure-button-primary" ng-click="generate()">Generate new!</button>
 			</div>
 		</div>
 		<div id="footer" class="pure-g">
-			<div class="pure-u-1-2">Héctor Manuel Téllez Gómez | Diseño y Análisis de Algoritmos</div>
+			<div class="pure-u-1-2">
+				<div>Héctor Manuel Téllez Gómez | Diseño y Análisis de Algoritmos</div>
+				<div>Dr. Sergio Rajsbaum Gorodezky</div>
+			</div>
 			<div class="pure-u-1-2 right">UNAM 2014</div>
 		</div>
 	</body>
