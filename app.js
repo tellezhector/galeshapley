@@ -130,9 +130,20 @@ app.controller("ctrl",
 			matchBoy(boy);			
 		}
 
-		var nextPromise = new Promise(function(res){nextPromise.resolver = function(){res()};});
+		var metaPromise = function()
+		{
+			var meta = {};
+			meta.promise = new Promise(function(res, rej){ meta.trigger = function(){ res(); }; });
+			return meta;
+		}; 
 
+		var mPromise = metaPromise();
 
+		$scope.nextStep = function()
+		{
+			mPromise.trigger();
+			mPromise = metaPromise();
+		};
 
 		var matchBoy = function(boy)
 		{
@@ -147,7 +158,13 @@ app.controller("ctrl",
 						preference.state = "current";
 						girlpreference.state = "current";
 
-						$timeout(res, $scope.timeout);
+						if($scope.stepByStep){
+							mPromise.promise.then(res);
+						}
+						else
+						{
+							$timeout(res, $scope.timeout);
+						}
 					})
 				.then(function()
 					{
@@ -179,14 +196,22 @@ app.controller("ctrl",
 					})
 				.then(function()
 					{
-						$timeout(function()
+						var callback = function()
 							{ 
 								var newboy = backup.pop(); 
 								if(newboy)
 								{
 									matchBoy(newboy);
 								}
-							}, $scope.timeout);
+							};
+
+						if($scope.stepByStep)
+						{
+							mPromise.promise.then(callback);
+						}
+						else{
+							$timeout(callback, $scope.timeout);
+						}
 					});
 		}
 
