@@ -46,6 +46,7 @@ app.controller("ctrl",
 
 		$scope.generate = function()
 		{
+			backup = [];
 			$scope.editable = true;
 			$scope.labels = (function(n){ var list = []; for (var i = 0; i < n; i++) { list.push( "#" + (i + 1))}; return list;})($scope.size);
 			var boynames = names.boys.slice(0, $scope.size);
@@ -112,55 +113,76 @@ app.controller("ctrl",
 				$scope.showNextStep = true;
 			}
 
-			matchBoy($scope.boys[0]);
+			$timeout(matchThem, 0);
 		};
+
+		var backup;
+
+		var matchThem = function()
+		{
+			backup = _.clone($scope.boys).reverse();
+			var boy = backup.pop();
+			matchBoy(boy);			
+		}
+
+		var nextPromise = new Promise(function(res){nextPromise.resolver = function(){res()};});
+
+
 
 		var matchBoy = function(boy)
 		{
-			var preference = boy.preferences.list[boy.last];
+ 				boy.last = boy.last+1;
+				var preference = boy.preferences.list[boy.last];
 
-			if(typeof preference != "undefined" && preference.state == "matched")
-			{
-				return;
-			}
+				var girl = $scope.girls[girlsIndex[preference.name]];
+				var girlpreference = girl.preferences.list[girl.preferences.index[boy.name]];
 
-			boy.last = boy.last+1;
-			preference = boy.preferences.list[boy.last];			
-			preference.state = "current";
+				new Promise(function(res,rej)
+					{
+						preference.state = "current";
+						girlpreference.state = "current";
 
-			var girl = $scope.girls[girlsIndex[preference.name]];
-
-			var girlpreference = girl.preferences.list[girl.preferences.index[boy.name]];
-			girlpreference.state = "current";
-
-			if(girl.last == -1)
-			{
-				girl.last = girlpreference.index;
-				girlpreference.state = "matched";
-				preference.state = "matched";
-			}
-			else if(girl.last > girlpreference.index)
-			{
-				var oldPrefernce = girl.preferences.list[girl.last];
-				
-				girl.last = girlpreference.index;
-				girlpreference.state = "matched";
-				preference.state = "matched";
-			
-				var oldBoy = $scope.boys[boysIndex[oldPrefernce.name]];
-				oldPrefernce.state = "unavailable";
-				oldBoy.preferences.list[oldBoy.last].state = "unavailable";
-				matchBoy(oldBoy);
-				
-			}
-			else
-			{
-				preference.state = "unavailable";
-				girlpreference.state = "unavailable";
-				matchBoy(boy);
-			}
-
-			matchNextBoy(boy);
+						$timeout(res, $scope.timeout);
+					})
+				.then(function()
+					{
+						if(girl.last == -1)
+						{
+							girl.last = girlpreference.index;
+							girlpreference.state = "matched";
+							preference.state = "matched";
+						}
+						else if(girl.last > girlpreference.index)
+						{
+							var oldPrefernce = girl.preferences.list[girl.last];
+							
+							girl.last = girlpreference.index;
+							girlpreference.state = "matched";
+							preference.state = "matched";
+						
+							var oldBoy = $scope.boys[boysIndex[oldPrefernce.name]];
+							oldPrefernce.state = "unavailable";
+							oldBoy.preferences.list[oldBoy.last].state = "unavailable";
+							backup.push(oldBoy);	
+						}
+						else
+						{
+							preference.state = "unavailable";
+							girlpreference.state = "unavailable";
+							backup.push(boy);
+						}						
+					})
+				.then(function()
+					{
+						$timeout(function()
+							{ 
+								var newboy = backup.pop(); 
+								if(newboy)
+								{
+									matchBoy(newboy);
+								}
+							}, $scope.timeout);
+					});
 		}
 
 		var matchNextBoy = function(boy)
