@@ -132,8 +132,8 @@ app.controller("ctrl",
 
 		var metaPromise = function()
 		{
-			var meta = {};
-			meta.promise = new $q(function(res, rej){ meta.trigger = function(){ res(); }; });
+			var meta = new $q.defer();
+		        meta.trigger = meta.resolve;
 			return meta;
 		}; 
 
@@ -152,20 +152,19 @@ app.controller("ctrl",
 
 				var girl = $scope.girls[girlsIndex[preference.name]];
 				var girlpreference = girl.preferences.list[girl.preferences.index[boy.name]];
-
-				new $q(function(res,rej)
-					{
+                                var algo = $q.defer();
+			
 						preference.state = "current";
 						girlpreference.state = "current";
 
 						if($scope.stepByStep){
-							mPromise.promise.then(res);
+							mPromise.promise.then(algo.resolve);
 						}
 						else
 						{
-							$timeout(res, $scope.timeout);
+							$timeout(algo.resolve, $scope.timeout);
 						}
-					})
+				algo.promise
 				.then(function()
 					{
 						if(girl.last == -1)
