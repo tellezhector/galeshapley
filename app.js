@@ -40,8 +40,8 @@ app.directive("personsTable", function($timeout)
 })
 
 app.controller("ctrl", 
-			["$scope", "$timeout", 
-	function($scope, $timeout)
+			["$scope", "$timeout", "$q"
+	function($scope, $timeout, $q)
 	{
 		$scope.size = 5;
 		$scope.timeout = 500;
@@ -133,7 +133,7 @@ app.controller("ctrl",
 		var metaPromise = function()
 		{
 			var meta = {};
-			meta.promise = new Promise(function(res, rej){ meta.trigger = function(){ res(); }; });
+			meta.promise = new $q(function(res, rej){ meta.trigger = function(){ res(); }; });
 			return meta;
 		}; 
 
@@ -153,7 +153,7 @@ app.controller("ctrl",
 				var girl = $scope.girls[girlsIndex[preference.name]];
 				var girlpreference = girl.preferences.list[girl.preferences.index[boy.name]];
 
-				new Promise(function(res,rej)
+				new $q(function(res,rej)
 					{
 						preference.state = "current";
 						girlpreference.state = "current";
