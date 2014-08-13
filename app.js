@@ -40,7 +40,7 @@ app.directive("personsTable", function($timeout)
 })
 
 app.controller("ctrl", 
-			["$scope", "$timeout", "$q"
+			["$scope", "$timeout", "$q",
 	function($scope, $timeout, $q)
 	{
 		$scope.size = 5;
