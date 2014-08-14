@@ -149,7 +149,7 @@ app.controller("ctrl",
 		var matchThem = function()
 		{
 			backup = _.clone($scope.boys).reverse();
-			var boy = backup.pop();
+			var boy = backup.splice(_.random(0, backup.length - 1), 1)[0];
 			matchBoy(boy);			
 		}
 
@@ -220,7 +220,7 @@ app.controller("ctrl",
 					{
 						var callback = function()
 							{ 
-								var newboy = backup.pop(); 
+								var newboy = backup.splice(_.random(0, backup.length - 1), 1)[0]; 
 								if(newboy)
 								{
 									matchBoy(newboy);
