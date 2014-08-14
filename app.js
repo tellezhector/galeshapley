@@ -51,6 +51,7 @@ app.controller("ctrl",
 
 		$scope.generate = function()
 		{
+		        mPromise = metaPromise();
 			backup = [];
 			$scope.editable = true;
 			$scope.labels = (function(n){ var list = []; for (var i = 0; i < n; i++) { list.push( "#" + (i + 1))}; return list;})($scope.size);
@@ -62,6 +63,27 @@ app.controller("ctrl",
 			$scope.girls = generateRows(girlnames, boynames);
 			girlsIndex = buildIndex($scope.girls);
 		};
+
+	        $scope.clean = function()
+	        {		       
+		    mPromise = metaPromise();
+		    backup = [];
+		    $scope.editable = true;
+		    $scope.boys = cleanRows($scope.boys);
+		    $scope.girls = cleanRows($scope.girls);
+		}
+
+                var cleanRows = function(persons)
+                {
+                    persons.forEach(function(person){
+			person.last = -1;
+			var names = _.map(person.preferences.list, function(p){ return p.name; });
+                        names = _.sortBy(names, function(n){ return person.preferences.index[n]; });
+			person.preferences = createPreferences(names);
+		    });
+
+                    return persons;
+                }
 
 		var buildIndex = function(persons)
 		{
@@ -88,6 +110,7 @@ app.controller("ctrl",
 
 			return rows;
 		};
+
 
 		var createPreferences = function(names)
 		{
